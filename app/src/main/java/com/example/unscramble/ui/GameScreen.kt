@@ -73,7 +73,8 @@ fun GameScreen(
                 .padding(mediumPadding),
             onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
             onKeyboardDone = {gameViewModel.validateUserGuess() },
-            isGuessWrong = gameUiState.isGuessedWrong
+            isGuessWrong = gameUiState.isGuessedWrong,
+            currentWordIndex = gameUiState.currentWordIndex
         )
         Column(
             modifier = Modifier
@@ -104,7 +105,7 @@ fun GameScreen(
             }
         }
 
-        GameStatus(score = 0, modifier = Modifier.padding(20.dp))
+        GameStatus(score = gameUiState.score, modifier = Modifier.padding(20.dp))
     }
 }
 
@@ -128,7 +129,8 @@ fun GameLayout(
     userGuess: String,
     modifier: Modifier = Modifier,
     currentScrambledWord: String,
-    isGuessWrong: Boolean
+    isGuessWrong: Boolean,
+    currentWordIndex: Int
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
@@ -147,7 +149,7 @@ fun GameLayout(
                     .background(colorScheme.surfaceTint)
                     .padding(horizontal = 10.dp, vertical = 4.dp)
                     .align(alignment = Alignment.End),
-                text = stringResource(R.string.word_count, 0),
+                text = stringResource(R.string.word_count, currentWordIndex),
                 style = typography.titleMedium,
                 color = colorScheme.onPrimary
             )
@@ -174,7 +176,14 @@ fun GameLayout(
                     disabledContainerColor = colorScheme.surface,
                 ),
                 onValueChange = onUserGuessChanged,
-                label = { Text(stringResource(R.string.enter_your_word)) },
+                label = {
+                    if (isGuessWrong) {
+                        Text(stringResource(R.string.wrong_guess))
+                    } else {
+                        Text(stringResource(R.string.enter_your_word))
+                    }
+
+                },
                 isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done

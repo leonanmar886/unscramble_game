@@ -31,9 +31,20 @@ class GameViewModel : ViewModel() {
 
   fun validateUserGuess() {
     if(userGuess.equals(currentWord, ignoreCase = true)){
-
+      _uiState.update {currentState ->
+        currentState.copy(
+          score = currentState.score + 1,
+          isGuessedWrong = false,
+          currentScrambledWord = pickRandomWordAndShuffle(),
+          currentWordIndex = currentState.currentWordIndex + 1
+        )
+      }
     } else {
-      _uiState.update { currentState -> currentState.copy(isGuessedWrong = true) }
+      _uiState.update { currentState ->
+        currentState.copy(
+          isGuessedWrong = true,
+        )
+      }
     }
     updateUserGuess("")
   }
