@@ -72,8 +72,9 @@ fun GameScreen(
                 .wrapContentHeight()
                 .padding(mediumPadding),
             onUserGuessChanged = { gameViewModel.updateUserGuess(it) },
-            onKeyboardDone = { },
-            )
+            onKeyboardDone = {gameViewModel.validateUserGuess() },
+            isGuessWrong = gameUiState.isGuessedWrong
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,7 +85,7 @@ fun GameScreen(
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
-                onClick = { }
+                onClick = {gameViewModel.validateUserGuess() }
             ) {
                 Text(
                     text = stringResource(R.string.submit),
@@ -126,7 +127,8 @@ fun GameLayout(
     onKeyboardDone: () -> Unit,
     userGuess: String,
     modifier: Modifier = Modifier,
-    currentScrambledWord: String
+    currentScrambledWord: String,
+    isGuessWrong: Boolean
 ) {
     val mediumPadding = dimensionResource(R.dimen.padding_medium)
 
@@ -173,7 +175,7 @@ fun GameLayout(
                 ),
                 onValueChange = onUserGuessChanged,
                 label = { Text(stringResource(R.string.enter_your_word)) },
-                isError = false,
+                isError = isGuessWrong,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
@@ -185,9 +187,6 @@ fun GameLayout(
     }
 }
 
-/*
- * Creates and shows an AlertDialog with final score.
- */
 @Composable
 private fun FinalScoreDialog(
     score: Int,
