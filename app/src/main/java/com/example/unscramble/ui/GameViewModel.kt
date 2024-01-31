@@ -71,6 +71,11 @@ class GameViewModel : ViewModel() {
     updateUserGuess("")
   }
 
+fun restartGame() {
+  usedWords.clear()
+  _uiState.value = GameUiState(currentScrambledWord = pickRandomWordAndShuffle())
+
+}
 
   private fun pickRandomWordAndShuffle(): String {
     currentWord = allWords.random()
